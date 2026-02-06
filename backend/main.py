@@ -1,10 +1,17 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
-import os
+from sqlalchemy.orm import Session
+from sqlalchemy import func
+from typing import List, Optional
+import schemas, models, database
+
+# Create tables logic isn't strictly necessary here if seed_data does it,
+# but it's good practice to ensure they exist on startup
+models.Base.metadata.create_all(bind=database.engine)
 
 app = FastAPI(title="RiskRadar API")
 
-# Configure CORS for React frontend
+# Configure CORS
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
@@ -13,6 +20,14 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Dependency
+def get_db():
+    db = database.SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
 @app.get("/")
 def read_root():
     return {"message": "Welcome to the RiskRadar API"}
@@ -20,6 +35,76 @@ def read_root():
 @app.get("/health")
 def health_check():
     return {"status": "healthy"}
+
+@app.get("/api/suppliers", response_model=List[schemas.SupplierOut])
+def list_suppliers(db: Session = Depends(get_db)):
+    return db.query(models.Supplier).all()
+
+@app.get("/api/suppliers/{id}", response_model=schemas.SupplierOut)
+def get_supplier(id: int, db: Session = Depends(get_db)):
+    supplier = db.query(models.Supplier).filter(models.Supplier.id == id).first()
+    if not supplier:
+        raise HTTPException(status_code=404, detail="Supplier not found")
+    return supplier
+
+@app.get("/api/risk-events", response_model=List[schemas.RiskEventOut])
+def list_risk_events(severity: Optional[str] = None, db: Session = Depends(get_db)):
+    query = db.query(models.RiskEvent).filter(models.RiskEvent.is_active == True)
+    if severity:
+        # basic case-insensitive match for demo
+        query = query.filter(models.RiskEvent.severity.ilike(severity))
+    return query.all()
+
+@app.get("/api/risk-events/{id}", response_model=schemas.RiskEventOut)
+def get_risk_event(id: int, db: Session = Depends(get_db)):
+    event = db.query(models.RiskEvent).filter(models.RiskEvent.id == id).first()
+    if not event:
+        raise HTTPException(status_code=404, detail="Risk event not found")
+    return event
+
+@app.get("/api/alerts", response_model=List[schemas.SupplyChainAlertOut])
+def list_alerts(db: Session = Depends(get_db)):
+    alerts = db.query(models.SupplyChainAlert).all()
+    
+    # Sort by impact level -> Severe, Major, Moderate, Minor
+    impact_order = {"Severe": 4, "Major": 3, "Moderate": 2, "Minor": 1}
+    alerts.sort(key=lambda x: impact_order.get(x.impact_level, 0), reverse=True)
+    return alerts
+
+@app.get("/api/dashboard/summary")
+def get_dashboard_summary(db: Session = Depends(get_db)):
+    total_suppliers = db.query(models.Supplier).count()
+    # High risk is defined as score > 50 for this demo
+    high_risk_count = db.query(models.Supplier).filter(models.Supplier.risk_score > 50.0).count()
+    active_alerts_count = db.query(models.SupplyChainAlert).count()
+    avg_risk_score = db.query(func.avg(models.Supplier.risk_score)).scalar() or 0.0
+
+    return {
+        "total_suppliers": total_suppliers,
+        "high_risk_count": high_risk_count,
+        "active_alerts_count": active_alerts_count,
+        "average_risk_score": round(avg_risk_score, 2)
+    }
+
+@app.get("/api/risk-map")
+def get_risk_map(db: Session = Depends(get_db)):
+    # Group by country
+    results = db.query(
+        models.Supplier.country,
+        func.count(models.Supplier.id).label('count'),
+        func.avg(models.Supplier.risk_score).label('avg_score')
+    ).group_by(models.Supplier.country).all()
+
+    return [{"country": r[0], "count": r[1], "avg_risk_score": round(r[2], 2)} for r in results]
+
+@app.post("/api/analyze")
+def analyze_company(req: schemas.AnalyzeRequest):
+    # Mock AI response
+    return {
+        "company_name": req.company_name,
+        "risk_level": "High" if "tech" in req.company_name.lower() else "Medium",
+        "mock_report": f"Based on our simulated AI analysis, {req.company_name} has dependencies in regions experiencing recent natural disasters and regulatory shifts. Recommended to diversify Tier-2 suppliers."
+    }
 
 if __name__ == "__main__":
     import uvicorn
