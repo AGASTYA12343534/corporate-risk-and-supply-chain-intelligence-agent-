@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from sqlalchemy import func
 from typing import List, Optional
-import schemas, models, database
+import schemas, models, database, ai_agent
 
 # Create tables logic isn't strictly necessary here if seed_data does it,
 # but it's good practice to ensure they exist on startup
@@ -98,12 +98,50 @@ def get_risk_map(db: Session = Depends(get_db)):
     return [{"country": r[0], "count": r[1], "avg_risk_score": round(r[2], 2)} for r in results]
 
 @app.post("/api/analyze")
-def analyze_company(req: schemas.AnalyzeRequest):
-    # Mock AI response
+def analyze_company(req: schemas.AnalyzeRequest, db: Session = Depends(get_db)):
+    # 1. Lookup company by name
+    company = db.query(models.Company).filter(models.Company.name.ilike(f"%{req.company_name}%")).first()
+    
+    # 2. Extract their suppliers
+    suppliers = []
+    if company and company.dependencies:
+        import json
+        try:
+            dep_names = json.loads(company.dependencies)
+            suppliers = db.query(models.Supplier).filter(models.Supplier.name.in_(dep_names)).all()
+        except Exception:
+            pass
+            
+    if not suppliers:
+        # Fallback to random if no exact match
+        suppliers = db.query(models.Supplier).limit(3).all()
+
+    sup_dicts = [{"name": s.name, "country": s.country, "industry": s.industry, "risk_score": s.risk_score} for s in suppliers]
+    
+    # 3. Score Exposure
+    exposure_summary = ai_agent.score_supply_chain_exposure(req.company_name, sup_dicts)
+    
+    # 4. Analyze each supplier
+    supplier_analysis = []
+    for s in sup_dicts:
+        supplier_analysis.append(ai_agent.analyze_supplier_risk(s))
+        
+    # 5. Get a recent event to demonstrate mitigation recommendations
+    recent_event = db.query(models.RiskEvent).filter(models.RiskEvent.is_active == True).order_by(models.RiskEvent.id.desc()).first()
+    recent_event_dict = {"event_type": "unknown", "severity": "low", "description": "No active events"}
+    if recent_event:
+        recent_event_dict = {
+            "event_type": recent_event.event_type,
+            "severity": recent_event.severity,
+            "description": recent_event.description
+        }
+    mitigation_steps = ai_agent.recommend_mitigation(recent_event_dict)
+
     return {
-        "company_name": req.company_name,
-        "risk_level": "High" if "tech" in req.company_name.lower() else "Medium",
-        "mock_report": f"Based on our simulated AI analysis, {req.company_name} has dependencies in regions experiencing recent natural disasters and regulatory shifts. Recommended to diversify Tier-2 suppliers."
+        "company_name": company.name if company else req.company_name,
+        "exposure_analysis": exposure_summary,
+        "supplier_details": supplier_analysis,
+        "recommended_mitigation": mitigation_steps
     }
 
 if __name__ == "__main__":
