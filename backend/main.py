@@ -40,7 +40,7 @@ def health_check():
 def list_suppliers(db: Session = Depends(get_db)):
     return db.query(models.Supplier).all()
 
-@app.get("/api/suppliers/{id}", response_model=schemas.SupplierOut)
+@app.get("/api/suppliers/{id}", response_model=schemas.SupplierDetailOut)
 def get_supplier(id: int, db: Session = Depends(get_db)):
     supplier = db.query(models.Supplier).filter(models.Supplier.id == id).first()
     if not supplier:
