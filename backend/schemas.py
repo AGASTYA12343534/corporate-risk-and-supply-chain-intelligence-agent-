@@ -1,5 +1,6 @@
 from pydantic import BaseModel, ConfigDict
 from datetime import datetime
+from typing import List
 
 class SupplierBase(BaseModel):
     name: str
@@ -39,3 +40,8 @@ class SupplyChainAlertOut(SupplyChainAlertBase):
 
 class AnalyzeRequest(BaseModel):
     company_name: str
+
+class SupplierDetailOut(SupplierOut):
+    risk_events: List[RiskEventOut] = []
+    
+    model_config = ConfigDict(from_attributes=True)

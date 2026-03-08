@@ -1,13 +1,14 @@
 import React from 'react';
+import { NavLink } from 'react-router-dom';
 import { LayoutDashboard, Users, AlertTriangle, Bell, BrainCircuit } from 'lucide-react';
 
 const Sidebar = () => {
   const links = [
-    { name: 'Dashboard', icon: <LayoutDashboard size={20} />, active: true },
-    { name: 'Suppliers', icon: <Users size={20} /> },
-    { name: 'Risk Events', icon: <AlertTriangle size={20} /> },
-    { name: 'Alerts', icon: <Bell size={20} /> },
-    { name: 'AI Analysis', icon: <BrainCircuit size={20} /> },
+    { name: 'Dashboard', path: '/dashboard', icon: <LayoutDashboard size={20} /> },
+    { name: 'Suppliers', path: '/suppliers', icon: <Users size={20} /> },
+    { name: 'Risk Events', path: '/risk-events', icon: <AlertTriangle size={20} /> },
+    { name: 'Alerts', path: '/alerts', icon: <Bell size={20} /> },
+    { name: 'AI Analysis', path: '/ai-analysis', icon: <BrainCircuit size={20} /> },
   ];
 
   return (
@@ -19,18 +20,18 @@ const Sidebar = () => {
       <div className="flex-1 py-6">
         <nav className="space-y-1">
           {links.map((link) => (
-            <a
+            <NavLink
               key={link.name}
-              href="#"
-              className={`flex items-center px-6 py-3 text-sm font-medium transition-all ${
-                link.active 
+              to={link.path}
+              className={({ isActive }) => `flex items-center px-6 py-3 text-sm font-medium transition-all ${
+                isActive 
                   ? 'bg-blue-600/10 text-blue-400 border-r-4 border-blue-500' 
                   : 'hover:bg-slate-800 hover:text-white'
               }`}
             >
               <span className="mr-3">{link.icon}</span>
               {link.name}
-            </a>
+            </NavLink>
           ))}
         </nav>
       </div>
