@@ -1,11 +1,12 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, Users, AlertTriangle, Bell, BrainCircuit } from 'lucide-react';
+import { LayoutDashboard, Users, AlertTriangle, Bell, BrainCircuit, Globe } from 'lucide-react';
 
 const Sidebar = () => {
   const links = [
     { name: 'Dashboard', path: '/dashboard', icon: <LayoutDashboard size={20} /> },
     { name: 'Suppliers', path: '/suppliers', icon: <Users size={20} /> },
+    { name: 'Risk Map', path: '/risk-map', icon: <Globe size={20} /> },
     { name: 'Risk Events', path: '/risk-events', icon: <AlertTriangle size={20} /> },
     { name: 'Alerts', path: '/alerts', icon: <Bell size={20} /> },
     { name: 'AI Analysis', path: '/ai-analysis', icon: <BrainCircuit size={20} /> },
