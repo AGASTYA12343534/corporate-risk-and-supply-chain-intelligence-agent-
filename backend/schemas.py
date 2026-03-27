@@ -38,8 +38,11 @@ class SupplyChainAlertOut(SupplyChainAlertBase):
     id: int
     model_config = ConfigDict(from_attributes=True)
 
+from typing import List, Optional
+
 class AnalyzeRequest(BaseModel):
     company_name: str
+    supplier_ids: Optional[List[int]] = []
 
 class SupplierDetailOut(SupplierOut):
     risk_events: List[RiskEventOut] = []

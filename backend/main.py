@@ -99,18 +99,20 @@ def get_risk_map(db: Session = Depends(get_db)):
 
 @app.post("/api/analyze")
 def analyze_company(req: schemas.AnalyzeRequest, db: Session = Depends(get_db)):
-    # 1. Lookup company by name
-    company = db.query(models.Company).filter(models.Company.name.ilike(f"%{req.company_name}%")).first()
-    
-    # 2. Extract their suppliers
+    # 1. Custom explicit suppliers or company profile
+    company = None
     suppliers = []
-    if company and company.dependencies:
-        import json
-        try:
-            dep_names = json.loads(company.dependencies)
-            suppliers = db.query(models.Supplier).filter(models.Supplier.name.in_(dep_names)).all()
-        except Exception:
-            pass
+    if req.supplier_ids and len(req.supplier_ids) > 0:
+        suppliers = db.query(models.Supplier).filter(models.Supplier.id.in_(req.supplier_ids)).all()
+    else:
+        company = db.query(models.Company).filter(models.Company.name.ilike(f"%{req.company_name}%")).first()
+        if company and company.dependencies:
+            import json
+            try:
+                dep_names = json.loads(company.dependencies)
+                suppliers = db.query(models.Supplier).filter(models.Supplier.name.in_(dep_names)).all()
+            except Exception:
+                pass
             
     if not suppliers:
         # Fallback to random if no exact match
