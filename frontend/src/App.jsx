@@ -5,6 +5,7 @@ import Dashboard from './components/Dashboard'
 import Suppliers from './components/Suppliers'
 import RiskMap from './components/RiskMap'
 import AIAnalysis from './components/AIAnalysis'
+import Alerts from './components/Alerts'
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
         <Route path="/suppliers" element={<Suppliers />} />
         <Route path="/risk-map" element={<RiskMap />} />
         <Route path="/ai-analysis" element={<AIAnalysis />} />
+        <Route path="/alerts" element={<Alerts />} />
         <Route path="*" element={<Dashboard />} />
       </Routes>
     </Layout>
