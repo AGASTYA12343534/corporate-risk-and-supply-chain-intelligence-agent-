@@ -1,8 +1,8 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, Users, AlertTriangle, Bell, BrainCircuit, Globe } from 'lucide-react';
+import { LayoutDashboard, Users, AlertTriangle, Bell, BrainCircuit, Globe, X } from 'lucide-react';
 
-const Sidebar = () => {
+const Sidebar = ({ isOpen, setIsOpen }) => {
   const links = [
     { name: 'Dashboard', path: '/dashboard', icon: <LayoutDashboard size={20} /> },
     { name: 'Suppliers', path: '/suppliers', icon: <Users size={20} /> },
@@ -13,10 +13,24 @@ const Sidebar = () => {
   ];
 
   return (
-    <div className="w-64 bg-[#0f172a] text-slate-300 h-screen fixed top-0 left-0 flex flex-col shadow-xl z-20">
-      <div className="h-16 flex items-center px-6 border-b border-slate-800">
-        <BrainCircuit className="text-blue-500 mr-3" size={28} />
-        <span className="text-white font-bold text-xl tracking-tight">RiskRadar</span>
+    <>
+    {/* Mobile Overlay */}
+    {isOpen && (
+      <div 
+        className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-30 md:hidden"
+        onClick={() => setIsOpen(false)}
+      ></div>
+    )}
+    
+    <div className={`w-64 bg-[#0f172a] text-slate-300 h-screen fixed top-0 left-0 flex flex-col shadow-2xl z-40 transition-transform duration-300 ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}>
+      <div className="h-16 flex items-center justify-between px-6 border-b border-slate-800">
+        <div className="flex items-center">
+          <BrainCircuit className="text-blue-500 mr-3" size={28} />
+          <span className="text-white font-bold text-xl tracking-tight">RiskRadar</span>
+        </div>
+        <button onClick={() => setIsOpen(false)} className="md:hidden text-slate-400 hover:text-white">
+          <X size={24} />
+        </button>
       </div>
       <div className="flex-1 py-6">
         <nav className="space-y-1">
@@ -24,6 +38,7 @@ const Sidebar = () => {
             <NavLink
               key={link.name}
               to={link.path}
+              onClick={() => setIsOpen(false)}
               className={({ isActive }) => `flex items-center px-6 py-3 text-sm font-medium transition-all ${
                 isActive 
                   ? 'bg-blue-600/10 text-blue-400 border-r-4 border-blue-500' 
@@ -37,6 +52,7 @@ const Sidebar = () => {
         </nav>
       </div>
     </div>
+    </>
   );
 };
 
