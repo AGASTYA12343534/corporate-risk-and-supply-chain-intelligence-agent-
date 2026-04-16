@@ -1,30 +1,26 @@
 import React from 'react';
-import { ArrowUpRight } from 'lucide-react';
+import { ArrowUpRight, TrendingUp } from 'lucide-react';
 
 const SupplierLeaderboard = ({ suppliers }) => {
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-slate-100 flex flex-col h-full">
-      <div className="px-6 py-5 border-b border-slate-100 flex justify-between items-center">
-        <h2 className="text-lg font-bold text-slate-800">Highest Risk Suppliers</h2>
+    <div className="bg-slate-950 rounded-xl shadow-sm border border-slate-800 flex flex-col h-full">
+      <div className="px-6 py-5 border-b border-slate-800 flex justify-between items-center">
+        <h3 className="text-lg font-bold text-white flex items-center font-heading tracking-wide">
+          <TrendingUp className="mr-3 text-red-500 drop-shadow-[0_0_8px_rgba(239,68,68,0.6)]" size={20} /> Critical Nodes
+        </h3>
       </div>
       <div className="p-2 flex-1 flex flex-col">
         {suppliers.map((supplier) => (
-          <div key={supplier.id} className="p-4 hover:bg-slate-50 rounded-lg transition-colors border-b border-slate-50 last:border-0 group cursor-pointer">
-            <div className="flex justify-between items-start mb-3">
-              <div className="flex flex-col">
-                <span className="text-sm font-bold text-slate-800 group-hover:text-blue-600 transition-colors flex items-center">
-                  {supplier.name}
-                  <ArrowUpRight size={14} className="ml-1 opacity-0 group-hover:opacity-100 shrink-0" />
-                </span>
-                <span className="text-xs text-slate-500 mt-0.5 font-medium">{supplier.country} • {supplier.industry}</span>
-              </div>
-              <span className="text-xs font-bold text-red-700 bg-red-100 border border-red-200 px-2 py-1 rounded-md shrink-0 ml-4">
+          <div key={supplier.id} className="flex flex-col space-y-3 p-4 rounded-xl border border-transparent hover:border-white/5 hover:bg-white/[0.02] transition-colors">
+            <div className="flex justify-between items-center">
+              <span className="font-bold text-slate-300 text-sm">{supplier.name}</span>
+              <span className={`text-xs font-black px-2 py-1 rounded border ${supplier.risk_score > 80 ? 'bg-red-500/10 text-red-400 border-red-500/20 shadow-[0_0_8px_rgba(239,68,68,0.2)]' : 'bg-orange-500/10 text-orange-400 border-orange-500/20 shadow-[0_0_8px_rgba(249,115,22,0.2)]'}`}>
                 {supplier.risk_score.toFixed(1)} / 100
               </span>
             </div>
-            <div className="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
+            <div className="w-full bg-slate-800 rounded-full h-1.5 overflow-hidden shadow-inner">
               <div 
-                className={`h-full rounded-full ${supplier.risk_score > 60 ? 'bg-red-500' : supplier.risk_score > 40 ? 'bg-orange-400' : 'bg-yellow-400'}`} 
+                className={`h-1.5 rounded-full shadow-[0_0_8px] ${supplier.risk_score > 80 ? 'bg-red-500 shadow-red-500' : 'bg-orange-500 shadow-orange-500'}`} 
                 style={{ width: `${Math.min(supplier.risk_score, 100)}%` }}
               ></div>
             </div>

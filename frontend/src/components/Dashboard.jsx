@@ -53,10 +53,10 @@ const Dashboard = () => {
     <div className="space-y-8 animate-in fade-in duration-500">
       <div className="flex justify-between items-end">
         <div>
-          <h1 className="text-2xl font-black text-slate-800 tracking-tight">Global Risk Dashboard</h1>
-          <p className="text-slate-500 font-medium mt-1">Real-time supply chain vulnerabilities and active threat tracking</p>
+          <h1 className="text-3xl font-black text-white tracking-tight drop-shadow-sm font-heading">Risk Intelligence Core</h1>
+          <p className="text-slate-400 font-medium mt-1 tracking-wide">Real-time macro telemetry of external exposure.</p>
         </div>
-        <div className="text-xs text-slate-500 font-bold bg-white px-4 py-2 rounded-lg shadow-sm border border-slate-200">
+        <div className="text-xs text-slate-400 font-bold bg-white/5 px-4 py-2 rounded-lg shadow-sm border border-white/10">
           Last Updated: {new Date().toLocaleTimeString()}
         </div>
       </div>
@@ -93,11 +93,11 @@ const Dashboard = () => {
         />
       </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-        <div className="xl:col-span-2 flex flex-col">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2 bg-white/[0.02] backdrop-blur-md rounded-2xl border border-white/5 p-7 shadow-xl">
           <RiskEventsTable events={events} />
         </div>
-        <div className="xl:col-span-1 flex flex-col">
+        <div className="lg:col-span-1 bg-white/[0.02] backdrop-blur-md rounded-2xl border border-white/5 p-7 shadow-xl">
           <SupplierLeaderboard suppliers={suppliers} />
         </div>
       </div>
