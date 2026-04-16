@@ -49,32 +49,32 @@ const SupplierModal = ({ supplierId, onClose }) => {
   const chartColor = score > 60 ? '#ef4444' : score > 40 ? '#f97316' : '#eab308'; // red, orange, yellow
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm animate-in fade-in p-4">
-      <div className="bg-white rounded-2xl shadow-xl w-full max-w-3xl max-h-[90vh] overflow-hidden flex flex-col slide-in-from-bottom-4">
-        
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-md animate-in fade-in p-4">
+      <div className="bg-[#0a0a0a] rounded-2xl shadow-2xl border border-white/10 w-full max-w-3xl max-h-[90vh] overflow-hidden flex flex-col slide-in-from-bottom-4 relative">
+        <div className="absolute inset-0 bg-gradient-to-b from-blue-500/5 to-transparent pointer-events-none"></div>
         {/* Header */}
-        <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+        <div className="px-6 py-5 border-b border-white/5 flex justify-between items-center bg-white/[0.02] z-10">
           <div>
-            <h2 className="text-xl font-bold text-slate-800">{data.name}</h2>
-            <p className="text-sm font-medium text-slate-500">{data.country} • {data.industry}</p>
+            <h2 className="text-2xl font-black text-white font-heading tracking-wide">{data.name}</h2>
+            <p className="text-sm font-medium text-blue-400">{data.country} • {data.industry}</p>
           </div>
-          <button onClick={onClose} className="p-2 text-slate-400 hover:bg-slate-200 rounded-full transition-colors">
+          <button onClick={onClose} className="p-2 text-slate-400 hover:bg-white/10 hover:text-white rounded-full transition-colors">
             <X size={20} />
           </button>
         </div>
 
         {/* Content */}
         <div className="p-6 overflow-y-auto flex-1 font-sans">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 relative z-10">
             <div className="md:col-span-2 space-y-4">
-              <h3 className="text-lg font-bold text-slate-800 flex items-center"><Activity className="mr-2 text-blue-500" size={20}/> Core Information</h3>
-              <div className="grid grid-cols-2 gap-4 bg-slate-50 p-4 rounded-xl border border-slate-100">
-                <div><span className="text-xs text-slate-400 uppercase font-bold tracking-wider">Status</span><p className="font-semibold text-slate-700">{data.status}</p></div>
-                <div><span className="text-xs text-slate-400 uppercase font-bold tracking-wider">Last Updated</span><p className="font-semibold text-slate-700">{new Date(data.last_updated).toLocaleDateString()}</p></div>
+              <h3 className="text-lg font-bold text-white font-heading tracking-wide flex items-center"><Activity className="mr-3 text-blue-500 drop-shadow-[0_0_8px_rgba(59,130,246,0.6)]" size={20}/> Core Metrics</h3>
+              <div className="grid grid-cols-2 gap-4 bg-white/[0.02] p-5 rounded-xl border border-white/5 shadow-inner">
+                <div><span className="text-xs text-slate-500 uppercase font-bold tracking-widest">Status</span><p className="font-semibold text-slate-300 mt-1">{data.status}</p></div>
+                <div><span className="text-xs text-slate-500 uppercase font-bold tracking-widest">Last Updated</span><p className="font-semibold text-slate-300 mt-1">{new Date(data.last_updated).toLocaleDateString()}</p></div>
               </div>
             </div>
 
-            <div className="flex flex-col items-center justify-center bg-slate-50 p-4 rounded-xl border border-slate-100 relative">
+            <div className="flex flex-col items-center justify-center bg-white/[0.02] p-5 rounded-xl border border-white/5 shadow-inner relative relative z-10">
               <span className="text-xs text-slate-400 uppercase font-bold tracking-wider absolute top-4 left-4">Risk Gauge</span>
               <div className="w-32 h-32 relative">
                 <ResponsiveContainer width="100%" height="100%">
@@ -174,92 +174,92 @@ const Suppliers = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-4 sm:space-y-0">
         <div>
-          <h1 className="text-2xl font-black text-slate-800 tracking-tight">Suppliers Directory</h1>
-          <p className="text-slate-500 font-medium mt-1">Manage and monitor vendor vulnerability metrics globally</p>
+          <h1 className="text-3xl font-black text-white font-heading tracking-wide">Vendor Matrix</h1>
+          <p className="text-slate-400 font-medium mt-1 tracking-wide">Manage and monitor vulnerability nodes globally.</p>
         </div>
         <button 
           onClick={() => downloadCSV(filteredSuppliers)}
-          className="flex items-center text-sm font-bold bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 px-4 py-2 rounded-lg shadow-sm transition-colors"
+          className="flex items-center text-sm font-bold bg-blue-600/10 border border-blue-500/30 text-blue-400 hover:bg-blue-600/20 px-5 py-2.5 rounded-lg shadow-[0_0_15px_rgba(59,130,246,0.15)] transition-all"
         >
           <Download size={16} className="mr-2" />
-          Export CSV
+          Export Datastore
         </button>
       </div>
 
       {/* Filters Bar */}
-      <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-100 flex flex-col md:flex-row gap-4">
-        <div className="flex-1 relative">
-          <Search className="absolute left-3 top-2.5 text-slate-400" size={18} />
+      <div className="bg-white/[0.02] backdrop-blur-md p-4 rounded-2xl shadow-xl border border-white/5 flex flex-col md:flex-row gap-4 relative z-10">
+        <div className="flex-1 relative group">
+          <Search className="absolute left-3 top-2.5 text-slate-500 group-focus-within:text-blue-400 transition-colors" size={18} />
           <input 
             type="text" 
-            placeholder="Search supplier name..." 
-            className="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm font-medium focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+            placeholder="Query vendors..." 
+            className="w-full pl-10 pr-4 py-2 bg-white/5 border border-white/10 rounded-lg text-sm font-medium text-slate-200 focus:ring-1 focus:ring-blue-500/50 outline-none transition-all shadow-inner placeholder-slate-500"
             value={search}
             onChange={e => setSearch(e.target.value)}
           />
         </div>
         <div className="flex gap-4">
-          <div className="flex items-center bg-slate-50 border border-slate-200 rounded-lg px-3 py-1">
+          <div className="flex items-center bg-white/5 border border-white/10 rounded-lg px-3 py-1 hover:bg-white/10 transition-colors">
             <Filter size={16} className="text-slate-400 mr-2" />
             <select 
-              className="bg-transparent text-sm border-none outline-none font-bold text-slate-700 cursor-pointer"
+              className="bg-transparent text-sm border-none outline-none font-bold text-slate-300 cursor-pointer [&>option]:bg-slate-900"
               value={countryFilter}
               onChange={e => setCountryFilter(e.target.value)}
             >
-              {countries.map(c => <option key={c} value={c}>{c === 'All' ? 'All Countries' : c}</option>)}
+              {countries.map(c => <option key={c} value={c}>{c === 'All' ? 'Global Nodes' : c}</option>)}
             </select>
           </div>
-          <div className="flex items-center bg-slate-50 border border-slate-200 rounded-lg px-3 py-1">
+          <div className="flex items-center bg-white/5 border border-white/10 rounded-lg px-3 py-1 hover:bg-white/10 transition-colors">
             <Filter size={16} className="text-slate-400 mr-2" />
             <select 
-              className="bg-transparent text-sm border-none outline-none font-bold text-slate-700 cursor-pointer"
+              className="bg-transparent text-sm border-none outline-none font-bold text-slate-300 cursor-pointer [&>option]:bg-slate-900"
               value={industryFilter}
               onChange={e => setIndustryFilter(e.target.value)}
             >
-              {industries.map(i => <option key={i} value={i}>{i === 'All' ? 'All Industries' : i}</option>)}
+              {industries.map(i => <option key={i} value={i}>{i === 'All' ? 'All Sectors' : i}</option>)}
             </select>
           </div>
         </div>
       </div>
 
       {/* Table */}
-      <div className="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
+      <div className="bg-white/[0.02] backdrop-blur-md rounded-2xl shadow-xl border border-white/5 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-slate-50/80 text-slate-500 text-xs uppercase tracking-wider border-b border-slate-100">
-                <th className="px-6 py-4 font-bold">Supplier Name</th>
-                <th className="px-6 py-4 font-bold">Country</th>
-                <th className="px-6 py-4 font-bold">Industry</th>
-                <th className="px-6 py-4 font-bold">Risk Score</th>
-                <th className="px-6 py-4 font-bold">Status</th>
-                <th className="px-6 py-4 font-bold">Last Updated</th>
+              <tr className="border-b border-white/10 text-xs font-bold text-slate-500 uppercase tracking-widest bg-white/[0.01]">
+                <th className="px-6 py-5">Node Identity</th>
+                <th className="px-6 py-5">Location</th>
+                <th className="px-6 py-5">Classification</th>
+                <th className="px-6 py-5">Risk Grade</th>
+                <th className="px-6 py-5">State</th>
+                <th className="px-6 py-5">Telemetry Sync</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-white/5 text-slate-300">
               {filteredSuppliers.map((supplier) => (
                 <tr 
                   key={supplier.id} 
                   onClick={() => setSelectedSupplierId(supplier.id)}
-                  className="hover:bg-slate-50 transition-colors cursor-pointer group"
+                  className="hover:bg-white/[0.03] transition-colors cursor-pointer group"
                 >
-                  <td className="px-6 py-4 text-sm font-bold text-slate-800 group-hover:text-blue-600 transition-colors">
+                  <td className="px-6 py-5 text-sm font-bold text-slate-200 group-hover:text-blue-400 transition-colors">
                     {supplier.name}
                   </td>
-                  <td className="px-6 py-4 text-sm font-semibold text-slate-600">{supplier.country}</td>
-                  <td className="px-6 py-4 text-sm text-slate-600 font-medium">{supplier.industry}</td>
-                  <td className="px-6 py-4">
-                    <span className={`px-2.5 py-1 text-xs font-bold rounded-lg border ${supplier.risk_score > 60 ? 'bg-red-50 text-red-700 border-red-200' : supplier.risk_score > 40 ? 'bg-orange-50 text-orange-700 border-orange-200' : 'bg-green-50 text-green-700 border-green-200'}`}>
+                  <td className="px-6 py-5 text-sm font-semibold text-slate-400">{supplier.country}</td>
+                  <td className="px-6 py-5 text-sm text-slate-400 font-medium">{supplier.industry}</td>
+                  <td className="px-6 py-5">
+                    <span className={`px-3 py-1.5 text-[10px] font-black tracking-wider uppercase rounded border shadow-sm ${supplier.risk_score > 60 ? 'bg-red-500/10 text-red-400 border-red-500/20 shadow-red-500/20' : supplier.risk_score > 40 ? 'bg-orange-500/10 text-orange-400 border-orange-500/20 shadow-orange-500/20' : 'bg-green-500/10 text-green-400 border-green-500/20 shadow-green-500/20'}`}>
                       {supplier.risk_score.toFixed(1)}
                     </span>
                   </td>
-                  <td className="px-6 py-4 text-sm font-semibold text-slate-600">{supplier.status}</td>
-                  <td className="px-6 py-4 text-sm text-slate-400 font-medium">{new Date(supplier.last_updated).toLocaleDateString()}</td>
+                  <td className="px-6 py-5 text-sm font-semibold text-slate-400">{supplier.status}</td>
+                  <td className="px-6 py-5 text-sm text-slate-500 font-medium tracking-wider">{new Date(supplier.last_updated).toLocaleDateString()}</td>
                 </tr>
               ))}
               {filteredSuppliers.length === 0 && (
                 <tr>
-                  <td colSpan="6" className="px-6 py-12 text-center text-slate-400 font-medium">No suppliers match your filters.</td>
+                  <td colSpan="6" className="px-6 py-16 text-center text-slate-500 font-medium text-lg">No nodes trace matching parameters.</td>
                 </tr>
               )}
             </tbody>

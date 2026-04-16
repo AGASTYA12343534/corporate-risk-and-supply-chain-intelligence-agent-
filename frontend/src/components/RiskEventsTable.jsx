@@ -1,59 +1,59 @@
 import React from 'react';
+import { AlertTriangle } from 'lucide-react';
 
-const severityBadge = (severity) => {
-  const normalized = severity ? severity.toLowerCase() : '';
-  let style = 'bg-slate-100 text-slate-700 border-slate-200';
-  let label = severity || 'Unknown';
-
-  if (normalized === 'critical') style = 'bg-red-100 text-red-700 border-red-200';
-  else if (normalized === 'high') style = 'bg-orange-100 text-orange-700 border-orange-200';
-  else if (normalized === 'medium') style = 'bg-yellow-100 text-yellow-700 border-yellow-200';
-  else if (normalized === 'low') style = 'bg-green-100 text-green-700 border-green-200';
-  
-  return (
-    <span className={`px-2.5 py-1 text-xs font-bold rounded-full border ${style}`}>
-      {label.charAt(0).toUpperCase() + label.slice(1)}
-    </span>
-  );
+const getSeverityStyle = (severity) => {
+  switch (severity) {
+    case 'Critical':
+      return 'bg-red-500/10 text-red-400 border-red-500/20 shadow-[0_0_8px_rgba(239,68,68,0.2)]';
+    case 'High':
+      return 'bg-orange-500/10 text-orange-400 border-orange-500/20 shadow-[0_0_8px_rgba(249,115,22,0.2)]';
+    case 'Medium':
+      return 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20 shadow-[0_0_8px_rgba(234,179,8,0.2)]';
+    case 'Low':
+      return 'bg-green-500/10 text-green-400 border-green-500/20 shadow-[0_0_8px_rgba(34,197,94,0.2)]';
+    default:
+      return 'bg-slate-500/10 text-slate-400 border-slate-500/20';
+  }
 };
 
 const RiskEventsTable = ({ events }) => {
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-slate-100 flex flex-col h-full">
-      <div className="px-6 py-5 border-b border-slate-100 flex justify-between items-center">
-        <h2 className="text-lg font-bold text-slate-800">Recent Risk Events</h2>
-        <button className="text-sm font-semibold text-blue-600 hover:text-blue-800">View All</button>
+    <div className="bg-slate-900 rounded-xl shadow-2xl border border-white/10 flex flex-col h-full p-6">
+      <div className="flex justify-between items-center mb-6">
+        <h3 className="text-lg font-bold text-white flex items-center tracking-wide font-heading">
+          <AlertTriangle className="mr-3 text-orange-500 drop-shadow-[0_0_8px_rgba(249,115,22,0.6)]" size={20} /> Active Anomalies
+        </h3>
+        <button className="text-sm font-bold text-blue-400 hover:text-blue-300 transition-colors">View Logs</button>
       </div>
       <div className="overflow-x-auto flex-1">
         <table className="w-full text-left border-collapse">
           <thead>
-            <tr className="bg-slate-50/80 text-slate-500 text-xs uppercase tracking-wider border-b border-slate-100">
-              <th className="px-6 py-4 font-bold">Event Type</th>
-              <th className="px-6 py-4 font-bold">Severity</th>
-              <th className="px-6 py-4 font-bold">Description</th>
-              <th className="px-6 py-4 font-bold">Date Detected</th>
+            <tr className="border-b border-white/10 text-xs font-bold text-slate-500 uppercase tracking-widest">
+              <th className="pb-4 !pl-2">Threat Intelligence</th>
+              <th className="pb-4">Severity</th>
+              <th className="pb-4 text-right !pr-2">Detected</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100">
-            {events.map((event) => (
-              <tr key={event.id} className="hover:bg-slate-50 transition-colors group">
-                <td className="px-6 py-4 text-sm font-semibold text-slate-800 capitalize">
-                  {event.event_type}
+          <tbody className="text-slate-300">
+            {events.map((event, idx) => (
+              <tr key={event.id || idx} className="border-b border-white/5 last:border-0 hover:bg-white/[0.03] transition-colors cursor-pointer group">
+                <td className="py-4 !pl-2">
+                  <div className="font-bold text-slate-200 group-hover:text-white transition-colors">{event.title}</div>
+                  <div className="text-xs text-slate-500 mt-1.5 font-medium tracking-wide">{event.event_type} &bull; {event.affected_region}</div>
                 </td>
-                <td className="px-6 py-4">
-                  {severityBadge(event.severity)}
+                <td className="py-4">
+                  <span className={`px-2.5 py-1 text-[10px] uppercase tracking-widest font-black rounded border ${getSeverityStyle(event.severity)} shadow-sm`}>
+                    {event.severity}
+                  </span>
                 </td>
-                <td className="px-6 py-4 text-sm text-slate-600 max-w-sm truncate group-hover:text-slate-800 transition-colors">
-                  {event.description}
-                </td>
-                <td className="px-6 py-4 text-sm text-slate-500 font-medium">
-                  {new Date(event.date_detected).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
+                <td className="py-4 text-right text-sm text-slate-400 font-medium !pr-2">
+                  {new Date(event.date_reported).toLocaleDateString()}
                 </td>
               </tr>
             ))}
             {events.length === 0 && (
               <tr>
-                <td colSpan="4" className="px-6 py-12 text-center text-slate-400 font-medium">No recent risk events detected.</td>
+                <td colSpan="3" className="px-6 py-12 text-center text-slate-500 font-medium">No active anomalies detected.</td>
               </tr>
             )}
           </tbody>
